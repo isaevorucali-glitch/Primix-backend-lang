@@ -1,0 +1,156 @@
+# ========== Primix v0.2 — Demo Server ==========
+# Все 38 фич в одном файле
+
+start run/server
+
+# ---- Настройки ----
+env app_name = "Primix Demo"
+env version = "0.2"
+log on
+debug on
+timeout 30
+
+# ---- Безопасность ----
+/add t8t mixed
+key expires 24h
+intruder alert
+# lock down          # раскомментировать для физического доступа только
+# blackhole          # раскомментировать для полной тишины
+
+# ---- SOS: запасные серверы ----
+/add sos mod! backup_server_1 backup_server_2
+
+# ---- Отчёт каждый час ----
+/view in its entirety dev_laptop
+
+# ---- Кеш и очередь ----
+cache on
+queue on
+balance on
+
+# ---- Переменные ----
+counter = 0
+server_name = "Alpha"
+
+# ---- Главная ----
+go request / then
+    respond "Welcome to " + server_name + " | Primix " + env "version"
+
+# ---- Статус сервера ----
+go request /status then
+    status
+
+# ---- Приветствие ----
+go request /hello then
+    respond "Hello from Primix v0.2!"
+
+# ---- Счётчик запросов ----
+go request /count then
+    counter = counter + 1
+    respond "Total requests: " + counter
+
+# ---- Сохранить данные ----
+go fields /save then
+    store on/ user_data
+    respond "Data saved!"
+
+# ---- Загрузить данные ----
+go request /load then
+    respond get to/ user_data
+
+# ---- JSON ответ ----
+go request /api/users then
+    respond json {"name": "Ivan", "age": 13, "lang": "Primix"}
+
+# ---- MessagePack ответ ----
+go request /api/internal then
+    respond msgpack {"sensor": "temp", "value": 36.6}
+
+# ---- Эхо (POST) ----
+go fields /echo then
+    respond "Echo: " + get to/ message
+
+# ---- Поиск ----
+go request /search then
+    db query "SELECT 'result1', 'result2', 'result3'"
+
+# ---- Кинуть на другой сервер ----
+go request /sync then
+    throw to/$key "sync_data"
+    respond "Synced"
+
+# ---- Проверка другого сервера ----
+go request /ping_backup then
+    ping backup_server_1
+    respond "Ping sent"
+
+# ---- Список серверов в сети ----
+go request /network then
+    list servers
+
+# ---- Очистить кеш ----
+go request /clear_cache then
+    clear cache
+    respond "Cache cleared"
+
+# ---- Сохранить состояние ----
+go request /save_state then
+    save state
+    respond "State saved"
+
+# ---- Загрузить состояние ----
+go request /load_state then
+    load state
+    respond "State loaded"
+
+# ---- Сменить ключ ----
+go request /rotate_key then
+    key rotate
+    respond "Key rotated"
+
+# ---- Файл: чтение ----
+go request /read_config then
+    file read "config.txt"
+
+# ---- Файл: запись ----
+go fields /write_log then
+    file write "log.txt" get to/ log_data
+    respond "Written"
+
+# ---- Условие ----
+go request /check then
+    if counter > 10 then
+        respond "High load"
+    else
+        respond "Normal load"
+
+# ---- Цикл (при запросе) ----
+go request /repeat_demo then
+    repeat 3 times
+        print "Repeat works!"
+    respond "Done"
+
+# ---- Каждые 5 минут ----
+every 5 min do
+    print "Periodic task: server is alive"
+
+# ---- Самоуничтожение (защищено) ----
+go request /panic then
+    if get to/ auth_code = "secret123" then
+        burn server
+    else
+        respond "Wrong auth code"
+
+# ---- Блокировка ключа ----
+go request /block_enemy then
+    block key enemy_server_key
+    respond "Blocked"
+
+# ---- Белый список ----
+go request /whitelist_add then
+    whitelist trusted_partner_key
+    respond "Whitelisted"
+
+# ---- Здоровье ----
+go request /health then
+    respond "OK | Uptime: running"

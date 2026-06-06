@@ -1,0 +1,15 @@
+# Primix Cluster Node
+
+start run/server
+
+cache on
+queue on
+balance on
+
+go request /api/data then
+    respond json {"node": $key, "status": "alive"}
+
+go request /health then
+    respond "OK"
+
+/add sos mod! node_1 node_2 node_3

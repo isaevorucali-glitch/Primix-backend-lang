@@ -1,0 +1,13 @@
+# Primix Client пример
+
+connect with key xK9mF2wQ7vL4pR1nT8yU5bN3hJ6cA0dG
+
+# GET запрос
+result = call/ hello
+print result
+
+# POST запрос с данными
+send to/ save with {"name": "Test", "value": 123}
+
+# Проверка статуса сервера
+call/ status
