@@ -1,4 +1,19 @@
-# Синтаксис Primix
+# Синтаксис Primix v0.4
+
+## Расширения файлов
+
+- `.pmx` — серверный файл (бекенд)
+- `.pwx` — файл-связка для фронтенда (лежит на фронте)
+
+## .pwx синтаксис (фронтенд-связка)
+
+connect to key <ключ>
+routes /api/users
+routes /api/data
+ws /chat
+timeout 5
+reconnect on
+reconnect interval 3
 
 ## Сервер
 
@@ -7,101 +22,95 @@ start run/server ghost
 
 ## Маршруты
 
-go request /hello then
-    respond "GET ответ"
+go request /path then
+    respond "GET"
 
-go fields /save then
-    respond "POST ответ"
+go fields /path then
+    respond "POST"
 
 ## Ответы
 
-respond "текст"
-respond json {"ключ": "значение"}
-respond msgpack {"ключ": "значение"}
+respond "text"
+respond json {"key": "value"}
+respond msgpack {"key": "value"}
 
 ## Переменные
 
-имя = "значение"
-счётчик = 0
-счётчик = счётчик + 1
-
-## Хранилище
-
-store on/ ключ
-get to/ ключ
-
-## Связь серверов
-
-throw to/ключ данные
-throw to/$key данные
+name = "Primix"
+counter = 0
+counter = counter + 1
 
 ## Условия
 
-if счётчик больше 10 then
-    respond "Много"
+if counter > 10 then
+    respond "High"
 else
-    respond "Мало"
+    respond "Low"
 
 ## Циклы
 
 repeat 3 times
-    print "Повтор"
+    print "Hello"
 
-## Периодические задачи
+## Периодические
 
 every 5 min do
-    print "Живой"
+    print "Alive"
+
+## Хранилище
+
+store on/ key
+get to/ key
+
+## Межсерверная связь
+
+throw to/key data
+throw to/$key data
 
 ## База данных
 
 db query "SELECT * FROM users"
-db store users данные
+db store table data
 
 ## Файлы
 
 file read "config.txt"
-file write "log.txt" "текст"
-
-## Команды управления
-
-status              состояние сервера
-log on/off          вкл выкл логи
-debug on            отладка
-env ключ = значение переменная окружения
-ping ключ           проверка сервера
-timeout сек         таймаут
-list servers        список серверов
-key rotate          сменить ключ
-save state          сохранить
-load state          загрузить
-clear cache         очистить кеш
+file write "log.txt" "content"
 
 ## Безопасность
 
-/add t8t mixed      смешанный шифр
-/add t8t jp         японский шифр
-/add t8t en         английский шифр
-/add t8t rnd        рандомный шифр
-lock down           полная блокировка
-physical only       только физический доступ
-blackhole           режим тишины
-intruder alert      тревога при вторжении
-block key ключ      заблокировать
-whitelist ключ      белый список
-key expires 24h     срок ключа
+/add t8t mixed|jp|en|rnd
+lock down
+physical only
+blackhole
+intruder alert
+block key <key>
+whitelist <key>
+key expires 24h
 
-## СОС и мониторинг
+## SOS и мониторинг
 
-/add sos mod! ключ1 ключ2     запасные серверы
-/view in its entirety ключ1    отчёты на комп
+/add sos mod! backup1 backup2
+/view in its entirety dev_laptop
 
-## Кластер
+## Управление
 
-cache on            кеш
-queue on            очередь
-balance on          балансировка
+status
+log on/off
+debug on
+clear cache
+cache on
+queue on
+balance on
+env key = value
+ping key
+timeout 30
+list servers
+key rotate
+save state
+load state
 
 ## Экстренные
 
-burn server         самоуничтожение
-reload server       перезагрузка кода
+burn server
+reload server
